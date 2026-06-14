@@ -1,0 +1,20 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+backend/models/
+
+# Node / Vite
+node_modules/
+frontend/dist/
+*.log
+
+# Runtime activation state (regenerated from the landing page)
+backend/data/activation.json
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,166 @@
+/* InfoShield injected overlay styles. All classes are prefixed `isx-` so they
+   cannot collide with the host page's CSS. */
+
+.isx-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 30;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.isx-badge__core {
+  position: relative;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(76, 29, 149, 0.35);
+}
+.isx-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.35) 0%,
+    rgba(124, 58, 237, 0.18) 60%,
+    rgba(124, 58, 237, 0) 70%
+  );
+  animation: isx-ping 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.isx-ring:nth-child(2) { animation-delay: 0.9s; }
+.isx-ring:nth-child(3) { animation-delay: 1.8s; }
+
+@keyframes isx-ping {
+  0% { transform: scale(1); opacity: 0.55; }
+  70% { opacity: 0.12; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .isx-ring { animation: none; transform: scale(1.6); opacity: 0.18; }
+  .isx-ring:nth-child(3) { display: none; }
+}
+
+.isx-wrap {
+  margin: 12px 0 2px 56px;
+  font-family: Inter, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.isx-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #ddd6fe;
+  background: rgba(245, 243, 255, 0.8);
+  border-radius: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #0f1419;
+  transition: background 0.15s ease;
+}
+.isx-bar:hover { background: #f5f3ff; }
+.isx-bar img { width: 18px; height: 18px; border-radius: 9999px; }
+.isx-bar__name { font-weight: 600; color: #6d28d9; }
+.isx-bar__conf { color: rgba(15, 20, 25, 0.7); }
+.isx-bar__more {
+  margin-left: auto;
+  color: #7c3aed;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.isx-card {
+  margin-top: 8px;
+  border: 1px solid #ddd6fe;
+  background: linear-gradient(180deg, #f5f3ff 0%, #ffffff 100%);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.06);
+}
+.isx-card__head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.isx-card__head img { width: 20px; height: 20px; border-radius: 9999px; }
+.isx-card__title { font-size: 13px; font-weight: 600; color: #6d28d9; }
+.isx-sev {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.isx-sev__dot { width: 6px; height: 6px; border-radius: 9999px; background: #7c3aed; }
+
+.isx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.isx-chip {
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+}
+
+.isx-expl { font-size: 14px; line-height: 1.6; color: rgba(15, 20, 25, 0.8); margin: 0; }
+.isx-leans { margin-top: 12px; font-size: 12.5px; color: #536471; }
+.isx-leans b { color: rgba(15, 20, 25, 0.7); }
+
+.isx-toggle {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ddd6fe;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6d28d9;
+  cursor: pointer;
+}
+.isx-toggle__box {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid #c4b5fd;
+  display: inline-grid;
+  place-items: center;
+  font-size: 9px;
+  color: #fff;
+}
+.isx-toggle__box.on { background: #7c3aed; border-color: #7c3aed; }
+
+.isx-rec {
+  margin-top: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ede9fe;
+  padding: 12px;
+}
+.isx-rec__t { font-size: 12px; font-weight: 600; color: #6d28d9; margin-bottom: 2px; }
+.isx-rec__b { font-size: 13.5px; color: rgba(15, 20, 25, 0.75); line-height: 1.5; }
+.isx-foot { margin-top: 12px; font-size: 11px; color: #536471; }
+
+.isx-highlight {
+  background: linear-gradient(180deg, #ede9fe 0%, #ddd6fe 100%);
+  border-bottom: 2px solid #a78bfa;
+  border-radius: 3px;
+  padding: 0 2px;
+}

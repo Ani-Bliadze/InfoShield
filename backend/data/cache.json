@@ -1,0 +1,447 @@
+{
+  "meta": {
+    "built_at": "2026-06-14T11:09:55+00:00",
+    "model": "cardiffnlp/twitter-roberta-base-hate-latest",
+    "device": "cpu",
+    "note": "Neutral starter cache. Run build_cache.py or POST /rebuild-cache for real analysis.",
+    "warmup_ms": 180.0,
+    "gemini": true
+  },
+  "posts": {
+    "p1": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0009,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9991,
+          "HATE": 0.0009
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p2": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0019,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9981,
+          "HATE": 0.0019
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p3": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0014,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9986,
+          "HATE": 0.0014
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p4": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0013,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9987,
+          "HATE": 0.0013
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p5": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0011,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9989,
+          "HATE": 0.0011
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p6": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0016,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9984,
+          "HATE": 0.0016
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p7": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0012,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9988,
+          "HATE": 0.0012
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p8": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0019,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9981,
+          "HATE": 0.0019
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p9": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0037,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9963,
+          "HATE": 0.0037
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p10": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0031,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9969,
+          "HATE": 0.0031
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p11": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0043,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9957,
+          "HATE": 0.0043
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p12": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0013,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9987,
+          "HATE": 0.0013
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p13": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0009,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9991,
+          "HATE": 0.0009
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p14": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0014,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9986,
+          "HATE": 0.0014
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    },
+    "p15": {
+      "classification": {
+        "label": "HATE",
+        "flagged": true,
+        "confidence": 0.9903,
+        "high_confidence": true,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.0097,
+          "HATE": 0.9903
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": {
+        "techniques": [
+          "us_vs_them",
+          "dehumanizing_language",
+          "fear_amplification",
+          "emotional_manipulation",
+          "identity_targeting"
+        ],
+        "emotional_triggers": [
+          "fear of cultural loss",
+          "resentment",
+          "anxiety",
+          "outgroup hostility"
+        ],
+        "explanation": "The text establishes a sharp division between an in-group ('us') and an out-group ('these people'), attributing negative behaviors to the newcomers. It uses dehumanizing terminology to describe their population growth and amplifies fear by suggesting that the local culture and identity are on the verge of extinction.",
+        "recommendation": "To counter the emotional impact of this message, seek out objective demographic statistics and engage with balanced reporting on local community integration rather than relying on generalized, emotion",
+        "severity": "high",
+        "highlights": [
+          {
+            "phrase": "These people pour into our town, don't bother learning how we live, and expect us to bend over backwards for them.",
+            "type": "us_vs_them",
+            "label": "Us vs. Them Framing"
+          },
+          {
+            "phrase": "They breed faster than we can keep up",
+            "type": "dehumanizing_language",
+            "label": "Dehumanizing Language"
+          },
+          {
+            "phrase": "soon there'll be nothing left of who we are.",
+            "type": "fear_amplification",
+            "label": "Fear Amplification"
+          }
+        ],
+        "source": "gemini"
+      }
+    },
+    "p16": {
+      "classification": {
+        "label": "HATE",
+        "flagged": true,
+        "confidence": 0.9975,
+        "high_confidence": true,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.0025,
+          "HATE": 0.9975
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": {
+        "techniques": [
+          "dehumanizing_language",
+          "us_vs_them",
+          "fear_amplification",
+          "false_urgency",
+          "scapegoating"
+        ],
+        "emotional_triggers": [
+          "fear",
+          "disgust",
+          "anger",
+          "urgency"
+        ],
+        "explanation": "The text employs highly charged, dehumanizing metaphors to depict an unspecified group as a collective threat to the community's survival. By presenting the situation as an imminent crisis, it aims to provoke strong emotional reactions of fear and hostility rather than logical deliberation.",
+        "recommendation": "When encountering language that compares human groups to pests or threats, it is advisable to pause, identify the emotional triggers being used, and seek out objective, factual information from divers",
+        "severity": "high",
+        "highlights": [
+          {
+            "phrase": "vermin who swarm in",
+            "type": "dehumanizing_language",
+            "label": "Dehumanizing Language"
+          },
+          {
+            "phrase": "Every one of them is the same",
+            "type": "us_vs_them",
+            "label": "Us vs. Them Division"
+          },
+          {
+            "phrase": "bleed this place dry",
+            "type": "fear_amplification",
+            "label": "Fear Amplification"
+          },
+          {
+            "phrase": "before there's nothing left",
+            "type": "false_urgency",
+            "label": "False Urgency"
+          }
+        ],
+        "source": "gemini"
+      }
+    },
+    "p17": {
+      "classification": {
+        "label": "HATE",
+        "flagged": true,
+        "confidence": 0.9342,
+        "high_confidence": true,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.0658,
+          "HATE": 0.9342
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": {
+        "techniques": [
+          "dehumanizing_language",
+          "us_vs_them",
+          "scapegoating",
+          "fear_amplification"
+        ],
+        "emotional_triggers": [
+          "disgust",
+          "fear",
+          "anger",
+          "division"
+        ],
+        "explanation": "The text employs extreme dehumanizing language to compare a group of people to animals, stripping away their humanity to make exclusion seem justifiable. It establishes a sharp division between 'us' (the owners of 'our streets') and 'them' ('people like that'), while scapegoating this group by blaming them for potential societal ruin and amplifying fear to encourage urgent action.",
+        "recommendation": "When encountering statements that use dehumanizing metaphors or broad generalizations, focus on identifying the lack of objective evidence and seek out perspectives that respect human dignity and addr",
+        "severity": "high",
+        "highlights": [
+          {
+            "phrase": "They're animals, plain and simple, and you can't civilize an animal.",
+            "type": "dehumanizing_language",
+            "label": "Dehumanizing Language"
+          },
+          {
+            "phrase": "People like that",
+            "type": "us_vs_them",
+            "label": "Us vs. Them Division"
+          },
+          {
+            "phrase": "before they ruin everything.",
+            "type": "fear_amplification",
+            "label": "Fear Amplification"
+          }
+        ],
+        "source": "gemini"
+      }
+    },
+    "p18": {
+      "classification": {
+        "label": "HATE",
+        "flagged": true,
+        "confidence": 0.9947,
+        "high_confidence": true,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.0053,
+          "HATE": 0.9947
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": {
+        "techniques": [
+          "dehumanizing_language",
+          "us_vs_them",
+          "scapegoating",
+          "false_urgency",
+          "fear_amplification",
+          "identity_targeting"
+        ],
+        "emotional_triggers": [
+          "fear",
+          "disgust",
+          "anger",
+          "urgency"
+        ],
+        "explanation": "The text employs dehumanizing metaphors and urgent framing to portray a specific group as an existential threat to the community. By comparing individuals to pests and cargo, and warning of total destruction, it attempts to bypass logical reasoning in favor of fear and hostility.",
+        "recommendation": "Analyze the text by separating emotional assertions from verifiable facts. Look for objective statistics and balanced reporting regarding community demographics and migration, rather than accepting ge",
+        "severity": "high",
+        "highlights": [
+          {
+            "phrase": "They've infested",
+            "type": "dehumanizing_language",
+            "label": "Dehumanizing Language"
+          },
+          {
+            "phrase": "turned it into a dump",
+            "type": "scapegoating",
+            "label": "Scapegoating"
+          },
+          {
+            "phrase": "Pack them up",
+            "type": "dehumanizing_language",
+            "label": "Dehumanizing Language"
+          },
+          {
+            "phrase": "before there's nothing left of this place",
+            "type": "false_urgency",
+            "label": "False Urgency"
+          }
+        ],
+        "source": "gemini"
+      }
+    },
+    "p19": {
+      "classification": {
+        "label": "NOT_HATE",
+        "flagged": false,
+        "confidence": 0.0057,
+        "high_confidence": false,
+        "truncated": false,
+        "raw_scores": {
+          "NOT-HATE": 0.9943,
+          "HATE": 0.0057
+        },
+        "model": "cardiffnlp/twitter-roberta-base-hate-latest"
+      },
+      "analysis": null
+    }
+  }
+}

@@ -1,0 +1,346 @@
+[
+  {
+    "id": "p1",
+    "user": {
+      "name": "Maya Chen",
+      "handle": "maya_codes",
+      "initial": "M",
+      "color": "#2563EB",
+      "verified": false
+    },
+    "time": "12m",
+    "text": "spent three hours debugging today only to realize i'd been editing the wrong file the entire time. anyway. how is everyone's monday going",
+    "media": null,
+    "engagement": {
+      "replies": 156,
+      "reposts": 89,
+      "likes": 1243
+    }
+  },
+  {
+    "id": "p2",
+    "user": {
+      "name": "Dave R.",
+      "handle": "grillmaster_dave",
+      "initial": "D",
+      "color": "#D97706",
+      "verified": false
+    },
+    "time": "34m",
+    "text": "Unpopular opinion: pineapple absolutely belongs on pizza and I'm tired of pretending it doesn't 🍍",
+    "media": null,
+    "engagement": {
+      "replies": 890,
+      "reposts": 320,
+      "likes": 4500
+    }
+  },
+  {
+    "id": "p3",
+    "user": {
+      "name": "Priya K.",
+      "handle": "aerialnomad",
+      "initial": "P",
+      "color": "#0D9488",
+      "verified": true
+    },
+    "time": "1h",
+    "text": "Sunrise over the valley in Patagonia right now. Some places just don't feel real until you're standing in them. 🏔️",
+    "media": {
+      "type": "gradient"
+    },
+    "engagement": {
+      "replies": 230,
+      "reposts": 1200,
+      "likes": 8900
+    }
+  },
+  {
+    "id": "p4",
+    "user": {
+      "name": "Lena Ortiz",
+      "handle": "lena_writes",
+      "initial": "L",
+      "color": "#DB2777",
+      "verified": false
+    },
+    "time": "2h",
+    "text": "finished the first draft of my novel at 2am and immediately started doubting every single word of it. writing is just professionally arguing with yourself.",
+    "media": null,
+    "engagement": {
+      "replies": 98,
+      "reposts": 340,
+      "likes": 2100
+    }
+  },
+  {
+    "id": "p5",
+    "user": {
+      "name": "Sam · RN",
+      "handle": "nightshift_sam",
+      "initial": "S",
+      "color": "#7C3AED",
+      "verified": false
+    },
+    "time": "3h",
+    "text": "12 hour shift done. feet wrecked, heart full. a patient's family brought the whole unit donuts today and i nearly cried in the break room. it's the small stuff.",
+    "media": null,
+    "engagement": {
+      "replies": 145,
+      "reposts": 210,
+      "likes": 3400
+    }
+  },
+  {
+    "id": "p6",
+    "user": {
+      "name": "Tom B.",
+      "handle": "tom_b",
+      "initial": "T",
+      "color": "#0F172A",
+      "verified": false
+    },
+    "time": "4h",
+    "text": "is it coffee o'clock yet",
+    "media": null,
+    "engagement": {
+      "replies": 34,
+      "reposts": 12,
+      "likes": 540
+    }
+  },
+  {
+    "id": "p7",
+    "user": {
+      "name": "Anna Whitfield",
+      "handle": "historybuff_anna",
+      "initial": "A",
+      "color": "#9333EA",
+      "verified": true
+    },
+    "time": "5h",
+    "text": "people ask why i love history and honestly it's because nothing is ever as simple as the textbook makes it sound. every 'obvious' decision was made by a real person who couldn't see the ending, who was scared and tired and working with bad information. we read the past like the outcome was inevitable, but the people living it had no idea which way it would go. that's the part that stays with me, not the dates or the battles but the uncertainty. it makes me a lot gentler about the present, knowing future generations will flatten us into a tidy paragraph too.",
+    "media": null,
+    "engagement": {
+      "replies": 210,
+      "reposts": 980,
+      "likes": 5600
+    }
+  },
+  {
+    "id": "p8",
+    "user": {
+      "name": "Truth Hour",
+      "handle": "TheRealTruthHour",
+      "initial": "T",
+      "color": "#DC2626",
+      "verified": false
+    },
+    "time": "26m",
+    "text": "They don't want you to know this, but the new digital ID rolling out next month means they can switch off your bank account with a single click. This is NOT a conspiracy. Screenshot this before it gets taken down. ⏰",
+    "media": null,
+    "engagement": {
+      "replies": 3400,
+      "reposts": 8900,
+      "likes": 12000
+    }
+  },
+  {
+    "id": "p9",
+    "user": {
+      "name": "Open Your Eyes",
+      "handle": "wakeup_sheeple",
+      "initial": "O",
+      "color": "#7C2D12",
+      "verified": false
+    },
+    "time": "1h",
+    "text": "Wake up. Everything you were taught was designed to keep you obedient and quiet. The people at the top are laughing at how easy it was. Stop trusting them and start trusting your gut.",
+    "media": null,
+    "engagement": {
+      "replies": 890,
+      "reposts": 4200,
+      "likes": 6700
+    }
+  },
+  {
+    "id": "p10",
+    "user": {
+      "name": "Brad // crypto",
+      "handle": "cryptobrad",
+      "initial": "B",
+      "color": "#F59E0B",
+      "verified": false
+    },
+    "time": "1h",
+    "text": "🚨 ONLY 100 spots left. This is your LAST chance to get in before the price 10x's. The people who hesitate will be kicking themselves in 6 months. DM me NOW or stay broke. 👉 https://t.co/x9f2aQ",
+    "media": null,
+    "engagement": {
+      "replies": 1200,
+      "reposts": 450,
+      "likes": 890
+    }
+  },
+  {
+    "id": "p11",
+    "user": {
+      "name": "Real Talk Radio",
+      "handle": "realtalkradio",
+      "initial": "R",
+      "color": "#B91C1C",
+      "verified": false
+    },
+    "time": "2h",
+    "text": "Notice how every time regular people start asking real questions, there's suddenly a brand new crisis to distract everyone? That's not a coincidence. They've been running this exact playbook for decades.",
+    "media": null,
+    "engagement": {
+      "replies": 780,
+      "reposts": 5600,
+      "likes": 9800
+    }
+  },
+  {
+    "id": "p12",
+    "user": {
+      "name": "Concerned Parent",
+      "handle": "concerned_parent_99",
+      "initial": "C",
+      "color": "#92400E",
+      "verified": false
+    },
+    "time": "3h",
+    "text": "If you don't share this, don't call yourself a real parent. They are putting things into the curriculum that will destroy your child's mind by next year. Act before it's too late.",
+    "media": null,
+    "engagement": {
+      "replies": 2300,
+      "reposts": 6700,
+      "likes": 4500
+    }
+  },
+  {
+    "id": "p13",
+    "user": {
+      "name": "doomscroller",
+      "handle": "doomscroller",
+      "initial": "d",
+      "color": "#475569",
+      "verified": false
+    },
+    "time": "3h",
+    "text": "oh good, another 'once in a lifetime' crisis this week. truly we are so blessed to live through the single most important moment in human history every monday 🙄",
+    "media": null,
+    "engagement": {
+      "replies": 120,
+      "reposts": 670,
+      "likes": 3200
+    }
+  },
+  {
+    "id": "p14",
+    "user": {
+      "name": "just asking",
+      "handle": "quiet_observer",
+      "initial": "j",
+      "color": "#64748B",
+      "verified": false
+    },
+    "time": "4h",
+    "text": "i'm not saying anything is definitely wrong with the new policy... but doesn't it feel a little convenient? a lot of people are quietly starting to wonder, and maybe that's worth paying attention to.",
+    "media": null,
+    "engagement": {
+      "replies": 200,
+      "reposts": 340,
+      "likes": 1200
+    }
+  },
+  {
+    "id": "p15",
+    "user": {
+      "name": "Mike",
+      "handle": "patriot_mike49",
+      "initial": "M",
+      "color": "#991B1B",
+      "verified": false
+    },
+    "time": "5h",
+    "text": "These people pour into our town, don't bother learning how we live, and expect us to bend over backwards for them. They breed faster than we can keep up and soon there'll be nothing left of who we are. Enough.",
+    "media": null,
+    "engagement": {
+      "replies": 1200,
+      "reposts": 3400,
+      "likes": 5600
+    }
+  },
+  {
+    "id": "p16",
+    "user": {
+      "name": "ZephyrX",
+      "handle": "ZephyrX_",
+      "initial": "Z",
+      "color": "#1F2937",
+      "verified": false
+    },
+    "time": "6h",
+    "text": "Every one of them is the same — vermin who swarm in and bleed this place dry. They don't belong here and they should be driven out before there's nothing left.",
+    "media": null,
+    "engagement": {
+      "replies": 890,
+      "reposts": 1100,
+      "likes": 2300
+    }
+  },
+  {
+    "id": "p17",
+    "user": {
+      "name": "Borderwatch",
+      "handle": "borderwatch_now",
+      "initial": "B",
+      "color": "#7F1D1D",
+      "verified": false
+    },
+    "time": "7h",
+    "text": "They're animals, plain and simple, and you can't civilize an animal. People like that should be removed from our streets before they ruin everything.",
+    "media": null,
+    "engagement": {
+      "replies": 1500,
+      "reposts": 2100,
+      "likes": 3400
+    }
+  },
+  {
+    "id": "p18",
+    "user": {
+      "name": "Old Town Voice",
+      "handle": "oldtownvoice",
+      "initial": "O",
+      "color": "#78350F",
+      "verified": false
+    },
+    "time": "9h",
+    "text": "They've infested every neighborhood they've touched and turned it into a dump. Pack them up and send them back where they came from before there's nothing left of this place.",
+    "media": null,
+    "engagement": {
+      "replies": 1900,
+      "reposts": 2800,
+      "likes": 4500
+    }
+  },
+  {
+    "id": "p19",
+    "user": {
+      "name": "Jane",
+      "handle": "realtalk_jane",
+      "initial": "J",
+      "color": "#a16207",
+      "verified": false
+    },
+    "time": "11h",
+    "text": "funny how a certain kind of people always seem to end up at the center of every single problem in this city. at some point you stop calling it a coincidence.",
+    "media": null,
+    "engagement": {
+      "replies": 600,
+      "reposts": 900,
+      "likes": 1800
+    }
+  }
+]

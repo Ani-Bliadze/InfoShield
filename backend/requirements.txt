@@ -1,0 +1,17 @@
+# Core (required to serve the cache-first offline demo)
+flask>=3.0
+flask-cors>=4.0
+python-dotenv>=1.0
+
+# Local classifier (required to rebuild the cache / run /classify live)
+torch>=2.2
+transformers>=4.40
+# transformers needs one of safetensors/sentencepiece for these checkpoints
+safetensors>=0.4
+sentencepiece>=0.2
+
+# Gemini educational analysis (required to rebuild analyses live)
+google-genai>=0.3
+
+# Helpers
+huggingface_hub>=0.23

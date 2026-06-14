@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="hdr">
+      <img src="icons/icon48.png" alt="InfoShield" class="logo" />
+      <div>
+        <div class="title">InfoShield</div>
+        <div class="sub">Media-literacy layer</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="row__label">Analysis</span>
+      <button id="toggle" class="switch" role="switch" aria-checked="true">
+        <span class="knob"></span>
+      </button>
+    </div>
+
+    <div class="block">
+      <div class="block__label">Target page</div>
+      <div id="target" class="block__value mono">—</div>
+    </div>
+
+    <div class="stat">
+      <img src="icons/badge.png" class="stat__icon" alt="" />
+      <span id="flagged" class="stat__text">0 posts flagged on this page</span>
+    </div>
+
+    <div id="hint" class="hint"></div>
+
+    <div class="foot">Context, not censorship. Nothing is hidden or removed.</div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
