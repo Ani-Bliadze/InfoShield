@@ -1,28 +1,36 @@
-"""Educational manipulation-technique analysis via Gemini.
+"""Educational analysis (the explainer) + verifier (the judge).
 
-Privacy: only the post *text* is ever sent to Gemini. Usernames, handles, and
-any author metadata are never included. The SDK import is deferred so the
-backend runs cache-first without `google-genai` installed.
+The local models (hate + manipulation) decide WHETHER a post is flagged. This
+module decides WHY:
+  * analyze(text, kind)  -- runs the hate OR manipulation analysis prompt and
+                            returns techniques / severity / explanation / highlights.
+  * verify(text, analysis, kind) -- a second LLM pass that judges whether the
+                            analysis is accurate/relevant; if not, the caller
+                            overturns the flag (false positive).
 
-If the key is missing, the SDK is absent, or Gemini fails/blocks/returns bad
-JSON, this module degrades to a local heuristic analysis so the demo never
-crashes.
+Provider-agnostic (llm.py): Groq now, Gemini later. Privacy: only post text is
+sent. If the LLM is unavailable, analyze() degrades to a local heuristic and
+verify() fails open (keeps the original decision).
 """
 from __future__ import annotations
 
 import json
 import logging
-import re
 from typing import Optional
 
 from config import (
     ALLOWED_TECHNIQUES,
-    GEMINI_API_KEY,
-    GEMINI_MODEL,
-    GEMINI_SYSTEM_INSTRUCTION,
+    ANALYSIS_SYSTEM_INSTRUCTION,
+    HATE_ANALYSIS_PROMPT,
+    MANIPULATION_ANALYSIS_PROMPT,
     MAX_EXPLANATION_CHARS,
     TECHNIQUE_LABELS,
+    VERIFIER_MODEL,
+    VERIFIER_PROMPT,
+    VERIFIER_PROVIDER,
+    VERIFIER_SYSTEM_INSTRUCTION,
 )
+from llm import available, complete_json  # noqa: F401  (available re-exported)
 
 log = logging.getLogger("infoshield.analyzer")
 
@@ -50,80 +58,26 @@ ANALYSIS_SCHEMA = {
             },
         },
     },
-    "required": [
-        "techniques",
-        "emotional_triggers",
-        "explanation",
-        "recommendation",
-        "severity",
-        "highlights",
-    ],
+    "required": ["techniques", "emotional_triggers", "explanation",
+                 "recommendation", "severity", "highlights"],
 }
 
-_USER_PROMPT = (
-    "Analyze the following social-media post text for manipulation techniques. "
-    "Identify which techniques (from the allowed set) are present, the emotional "
-    "triggers it leans on, a concise neutral explanation of HOW it tries to "
-    "influence the reader, a calm non-judgmental recommendation, an overall "
-    "severity, and the exact phrases (copied verbatim from the text) that "
-    "illustrate each technique.\n\nPOST TEXT:\n\"\"\"\n{text}\n\"\"\""
+_STRICT_SUFFIX = (
+    "\n\nIMPORTANT: Output MUST be a single valid JSON object matching the schema "
+    "exactly. No markdown fences, no commentary."
 )
-
-_client = None
-_client_tried = False
-
-
-def _get_client():
-    global _client, _client_tried
-    if _client_tried:
-        return _client
-    _client_tried = True
-    if not GEMINI_API_KEY:
-        log.warning("GEMINI_API_KEY not set -- analyses will use local fallback.")
-        return None
-    try:
-        from google import genai  # deferred
-
-        _client = genai.Client(api_key=GEMINI_API_KEY)
-        log.info("Gemini client initialized (model=%s).", GEMINI_MODEL)
-    except Exception as exc:  # noqa: BLE001
-        log.warning("Could not initialize Gemini client: %s", exc)
-        _client = None
-    return _client
-
-
-def available() -> bool:
-    return _get_client() is not None
 
 
 # --- validation -----------------------------------------------------------
-def _coerce_json(text: str) -> Optional[dict]:
-    if not text:
-        return None
-    text = text.strip()
-    # Strip accidental markdown fences.
-    text = re.sub(r"^```(?:json)?", "", text).strip()
-    text = re.sub(r"```$", "", text).strip()
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        m = re.search(r"\{.*\}", text, re.DOTALL)
-        if m:
-            try:
-                return json.loads(m.group(0))
-            except json.JSONDecodeError:
-                return None
-    return None
-
-
 def validate_analysis(raw: dict, text: str) -> Optional[dict]:
-    """Enforce allowlist, exact-substring highlights, no overlaps, length caps."""
+    """Enforce allowlist, exact-substring highlights, no overlaps, length caps.
+    Returns None when there is nothing usable (triggers retry / fallback)."""
     if not isinstance(raw, dict):
         return None
     lower = text.lower()
 
     techniques = [t for t in raw.get("techniques", []) if t in ALLOWED_TECHNIQUES]
-    techniques = list(dict.fromkeys(techniques))  # de-dupe, keep order
+    techniques = list(dict.fromkeys(techniques))
 
     triggers = [str(t).strip() for t in raw.get("emotional_triggers", []) if str(t).strip()]
     triggers = list(dict.fromkeys(triggers))[:6]
@@ -140,25 +94,23 @@ def validate_analysis(raw: dict, text: str) -> Optional[dict]:
     for h in raw.get("highlights", []):
         if not isinstance(h, dict):
             continue
-        phrase = str(h.get("phrase", "")).strip()
+        phrase = str(h.get("phrase") or h.get("text") or h.get("quote") or "").strip()
         if not phrase:
             continue
         idx = lower.find(phrase.lower())
-        if idx == -1:  # must be an exact (case-insensitive) substring
+        if idx == -1:
             continue
         span = (idx, idx + len(phrase))
-        if any(span[0] < e and s < span[1] for s, e in used_spans):  # overlap
+        if any(span[0] < e and s < span[1] for s, e in used_spans):
             continue
         used_spans.append(span)
         htype = str(h.get("type", "")).strip() or "emotional_manipulation"
         label = str(h.get("label", "")).strip() or TECHNIQUE_LABELS.get(
             htype, htype.replace("_", " ").title()
         )
-        # Use the exact original-case substring from the source text.
-        exact = text[idx: idx + len(phrase)]
-        highlights.append({"phrase": exact, "type": htype, "label": label})
+        highlights.append({"phrase": text[idx: idx + len(phrase)], "type": htype, "label": label})
 
-    if not techniques and not highlights:
+    if not techniques and not highlights and not explanation:
         return None
     return {
         "techniques": techniques,
@@ -172,25 +124,25 @@ def validate_analysis(raw: dict, text: str) -> Optional[dict]:
 
 # --- local fallback -------------------------------------------------------
 _HEURISTICS = {
-    "false_urgency": ["now", "before it", "immediately", "act now", "midnight", "by monday", "running out", "last chance", "don't wait"],
-    "fear_amplification": ["destroy", "lose everything", "collapse", "disaster", "danger", "afraid", "terrify", "catastroph", "doom"],
-    "us_vs_them": ["us against them", "they", "them", "elites", "those people", "our side", "their side", "wake up"],
+    "false_urgency": ["before it", "act now", "midnight", "by monday", "running out", "last chance", "don't wait", "act before"],
+    "fear_amplification": ["destroy", "lose everything", "collapse", "disaster", "danger", "terrify", "catastroph", "doom", "ruin everything"],
+    "us_vs_them": ["us against them", "those people", "our side", "their side", "wake up", "elites", "they don't want you"],
     "scapegoating": ["blame", "fault", "because of them", "the reason", "responsible for"],
-    "dehumanizing_language": ["vermin", "animals", "infest", "not like us", "parasite", "swarm", "flood"],
-    "ad_hominem": ["idiot", "fool", "stupid", "liar", "sheep", "too foolish"],
-    "emotional_manipulation": ["share this", "they don't want you", "hiding the truth", "stay angry", "open your eyes"],
+    "dehumanizing_language": ["vermin", "animals", "infest", "parasite", "swarm", "subhuman", "filth"],
+    "ad_hominem": ["idiot", "fool", "stupid", "liar", "sheep", "brainless"],
+    "emotional_manipulation": ["share this", "they don't want you", "hiding the truth", "stay angry", "open your eyes", "screenshot this", "real parent"],
 }
 
 _TRIGGER_WORDS = {
-    "fear": ["destroy", "lose", "danger", "afraid", "collapse", "shut", "forever"],
-    "anger": ["elites", "them", "liar", "blame", "angry"],
+    "fear": ["destroy", "lose", "danger", "afraid", "collapse", "forever"],
+    "anger": ["elites", "blame", "liar", "angry"],
     "urgency": ["now", "before", "midnight", "monday", "immediately"],
     "belonging": ["us", "our values", "who we are", "community"],
 }
 
 
 def local_fallback_analysis(text: str) -> dict:
-    """Deterministic heuristic analysis used when Gemini is unavailable."""
+    """Deterministic heuristic analysis used when the LLM is unavailable."""
     lower = text.lower()
     techniques, highlights, used = [], [], []
     for tech, cues in _HEURISTICS.items():
@@ -209,12 +161,11 @@ def local_fallback_analysis(text: str) -> dict:
                     "label": TECHNIQUE_LABELS.get(tech, tech.replace("_", " ").title()),
                 })
             break
+    n = len(techniques)
     triggers = [name for name, words in _TRIGGER_WORDS.items() if any(w in lower for w in words)]
-    if not techniques:
-        techniques = ["emotional_manipulation"]
-    severity = "high" if len(techniques) >= 3 else "medium" if len(techniques) == 2 else "low"
+    severity = "high" if n >= 3 else "medium" if n == 2 else "low"
     return {
-        "techniques": techniques[:4],
+        "techniques": techniques[:4] or ["emotional_manipulation"],
         "emotional_triggers": triggers[:4] or ["emotional reaction"],
         "explanation": (
             "This post leans on emotionally charged language and framing that "
@@ -227,49 +178,64 @@ def local_fallback_analysis(text: str) -> dict:
     }
 
 
-# --- main entry -----------------------------------------------------------
-def _call_gemini(text: str, strict: bool = False) -> Optional[dict]:
-    client = _get_client()
-    if client is None:
-        return None
-    from google.genai import types  # deferred
-
-    prompt = _USER_PROMPT.format(text=text)
-    if strict:
-        prompt += (
-            "\n\nIMPORTANT: Output MUST be a single valid JSON object matching the "
-            "schema exactly. No markdown fences, no commentary."
-        )
-    try:
-        resp = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                system_instruction=GEMINI_SYSTEM_INSTRUCTION,
-                response_mime_type="application/json",
-                response_schema=ANALYSIS_SCHEMA,
-                temperature=0.3,
-            ),
-        )
-        return _coerce_json(getattr(resp, "text", "") or "")
-    except Exception as exc:  # noqa: BLE001
-        log.warning("Gemini call failed (strict=%s): %s", strict, exc)
-        return None
+def _empty_analysis() -> dict:
+    return {
+        "techniques": [], "emotional_triggers": [], "explanation": "",
+        "recommendation": "", "severity": "low", "highlights": [], "source": "empty",
+    }
 
 
-def generate_analysis(text: str) -> dict:
-    """Return a validated analysis dict; never raises for normal input."""
+# --- analysis (the explainer) ---------------------------------------------
+def analyze(text: str, kind: str = "manipulation") -> dict:
+    """Run the hate OR manipulation analysis prompt; never raises for normal input."""
     if not text or not text.strip():
-        return local_fallback_analysis("")
+        return _empty_analysis()
+    template = HATE_ANALYSIS_PROMPT if kind == "hate" else MANIPULATION_ANALYSIS_PROMPT
 
-    raw = _call_gemini(text, strict=False)
+    raw = complete_json(ANALYSIS_SYSTEM_INSTRUCTION, template.format(text=text), schema=ANALYSIS_SCHEMA)
     analysis = validate_analysis(raw, text) if raw else None
     if analysis is None:
-        # One retry with stronger formatting instructions.
-        raw = _call_gemini(text, strict=True)
+        raw = complete_json(
+            ANALYSIS_SYSTEM_INSTRUCTION, template.format(text=text) + _STRICT_SUFFIX, schema=ANALYSIS_SCHEMA
+        )
         analysis = validate_analysis(raw, text) if raw else None
     if analysis is None:
         analysis = local_fallback_analysis(text)
     else:
-        analysis["source"] = "gemini"
+        analysis["source"] = "llm"
+    analysis["kind"] = kind
     return analysis
+
+
+# --- verifier (the judge) -------------------------------------------------
+def verify(text: str, analysis: dict, kind: str) -> dict:
+    """Second-pass LLM judge. Returns {relevant, reason, checked}.
+
+    Fails OPEN: if the verifier can't run, relevant=True (keep the flag).
+    """
+    payload = json.dumps(
+        {k: analysis.get(k) for k in ("techniques", "explanation", "severity")},
+        ensure_ascii=False,
+    )
+    # The configured verifier model id is Gemini-specific; only pass it when the
+    # verifier provider is Gemini (otherwise use the provider's default model).
+    vmodel = VERIFIER_MODEL if VERIFIER_PROVIDER == "gemini" else None
+    raw = complete_json(
+        VERIFIER_SYSTEM_INSTRUCTION,
+        VERIFIER_PROMPT.format(kind=kind, text=text, analysis=payload),
+        provider=VERIFIER_PROVIDER,
+        model=vmodel or None,
+        temperature=0.0,  # deterministic verdict
+    )
+    if not isinstance(raw, dict) or "relevant" not in raw:
+        return {"relevant": True, "reason": "verifier unavailable", "checked": False}
+    return {
+        "relevant": bool(raw.get("relevant")),
+        "reason": str(raw.get("reason", "")).strip()[:200],
+        "checked": True,
+    }
+
+
+# Backwards-compatible alias for the /analyze endpoint.
+def detect_and_analyze(text: str) -> dict:
+    return analyze(text, "manipulation")

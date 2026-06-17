@@ -1,0 +1,50 @@
+InfoShield — Models, Confidence, Languages & Metrics
+====================================================
+
+PIPELINE (per post)
+  1. Hate detector  (local)  -> hate_confidence
+  2. Manipulation detector (local) -> manipulation_confidence
+  3. If either flags -> Gemini ANALYSIS explains the techniques (gemini-3.5-flash)
+  4. Gemini VERIFIER double-checks the analysis (gemini-3.1-pro-preview); if it is not
+     relevant/accurate, the flag is overturned as a false positive.
+
+HOW CONFIDENCE IS DETERMINED
+  - Hate confidence  = softmax probability of the HATE class from the RoBERTa head
+                       (0.0-1.0). Flagged when >= 0.60.
+  - Manipulation confidence = the strongest single technique probability (max of the
+                       sigmoid outputs over 18 propaganda techniques). Flagged when
+                       >= 0.35 (recall-first; the verifier removes false positives).
+  - The number shown on a post = the score of whichever detector flagged it.
+  - "high_confidence" when that score >= 0.80.
+  - Overlay wording:  >= 0.80  -> "Detected with NN% confidence"
+                      0.60-0.79 (hate) -> "May contain indicators (NN% confidence)"
+
+LANGUAGES
+  - Hate model (cardiffnlp/twitter-roberta-base-hate-latest): ENGLISH.
+  - Manipulation model (synapti/nci-social-classifier-v3, BERTweet): ENGLISH.
+  - Gemini analyzer + verifier: MULTILINGUAL (~100+ languages).
+  => Local FLAGGING is English-first. The LLM explanation/verification works in many
+     languages, but to flag non-English content you would swap in a multilingual
+     detector (e.g. twitter-xlm-roberta-base-hate). Honest scope: English end-to-end.
+
+MODEL METRICS (published — these are strong, well-cited models)
+  Hate: cardiffnlp/twitter-roberta-base-hate-latest
+    - Binary hate / not-hate; fine-tuned on 13 English hate-speech datasets (WOAH 2023,
+      "Robust Hate Speech Detection: A Cross-Dataset Empirical Evaluation").
+    - Accuracy 0.877 | Macro-F1 0.753 | Weighted-F1 0.875 (aggregate over the 13 datasets).
+
+  Manipulation: synapti/nci-social-classifier-v3
+    - Multi-label propaganda/persuasion (18 techniques), BERTweet base.
+    - F1-micro 0.796 | F1-macro 0.551 (15/18 techniques >= 0.30 F1; best:
+      Name-Calling/Labeling 0.96).
+    - Trained on 9,069 samples (HateXplain + SemEval propaganda + synthetic + balanced
+      negatives).
+
+  Verifier value-add: because the manipulation model under-separates very short posts, the
+  Gemini verifier + a "no concrete technique -> drop" guard recover precision. Evaluate the
+  detector alone AND the detector+verifier pipeline (see docs/EVALUATION.md, backend/scripts/evaluate.py).
+
+WHY THESE MODELS
+  - Both are purpose-built for short social-media text (tweet-tuned), benchmarked, and run
+    locally (fast, free, private). The LLM layer adds explanation + a precision check
+    without needing any training data.

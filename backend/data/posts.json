@@ -18,21 +18,60 @@
     }
   },
   {
-    "id": "p2",
+    "id": "p8",
     "user": {
-      "name": "Dave R.",
-      "handle": "grillmaster_dave",
-      "initial": "D",
-      "color": "#D97706",
+      "name": "Truth Hour",
+      "handle": "TheRealTruthHour",
+      "initial": "T",
+      "color": "#DC2626",
       "verified": false
     },
-    "time": "34m",
-    "text": "Unpopular opinion: pineapple absolutely belongs on pizza and I'm tired of pretending it doesn't 🍍",
+    "time": "26m",
+    "text": "They don't want you to know this, but the new digital ID rolling out next month means they can switch off your bank account with a single click. This is NOT a conspiracy. Screenshot this before it gets taken down. ⏰",
+    "media": null,
+    "engagement": {
+      "replies": 3400,
+      "reposts": 8900,
+      "likes": 12000
+    }
+  },
+  {
+    "id": "v1",
+    "user": {
+      "name": "Truth Unfiltered",
+      "handle": "truth_unfiltered",
+      "initial": "T",
+      "color": "#B91C1C",
+      "verified": false
+    },
+    "time": "22m",
+    "text": "🚨 They're not showing you THIS on the news. Watch before they take it down — this is what they don't want you to see. Share it NOW while you still can, before it's too late.",
+    "media": {
+      "type": "video",
+      "src": "/media/video.mp4"
+    },
+    "engagement": {
+      "replies": 2100,
+      "reposts": 7400,
+      "likes": 9800
+    }
+  },
+  {
+    "id": "p16",
+    "user": {
+      "name": "ZephyrX",
+      "handle": "ZephyrX_",
+      "initial": "Z",
+      "color": "#1F2937",
+      "verified": false
+    },
+    "time": "6h",
+    "text": "Every one of them is the same — vermin who swarm in and bleed this place dry. They don't belong here and they should be driven out before there's nothing left.",
     "media": null,
     "engagement": {
       "replies": 890,
-      "reposts": 320,
-      "likes": 4500
+      "reposts": 1100,
+      "likes": 2300
     }
   },
   {
@@ -56,114 +95,6 @@
     }
   },
   {
-    "id": "p4",
-    "user": {
-      "name": "Lena Ortiz",
-      "handle": "lena_writes",
-      "initial": "L",
-      "color": "#DB2777",
-      "verified": false
-    },
-    "time": "2h",
-    "text": "finished the first draft of my novel at 2am and immediately started doubting every single word of it. writing is just professionally arguing with yourself.",
-    "media": null,
-    "engagement": {
-      "replies": 98,
-      "reposts": 340,
-      "likes": 2100
-    }
-  },
-  {
-    "id": "p5",
-    "user": {
-      "name": "Sam · RN",
-      "handle": "nightshift_sam",
-      "initial": "S",
-      "color": "#7C3AED",
-      "verified": false
-    },
-    "time": "3h",
-    "text": "12 hour shift done. feet wrecked, heart full. a patient's family brought the whole unit donuts today and i nearly cried in the break room. it's the small stuff.",
-    "media": null,
-    "engagement": {
-      "replies": 145,
-      "reposts": 210,
-      "likes": 3400
-    }
-  },
-  {
-    "id": "p6",
-    "user": {
-      "name": "Tom B.",
-      "handle": "tom_b",
-      "initial": "T",
-      "color": "#0F172A",
-      "verified": false
-    },
-    "time": "4h",
-    "text": "is it coffee o'clock yet",
-    "media": null,
-    "engagement": {
-      "replies": 34,
-      "reposts": 12,
-      "likes": 540
-    }
-  },
-  {
-    "id": "p7",
-    "user": {
-      "name": "Anna Whitfield",
-      "handle": "historybuff_anna",
-      "initial": "A",
-      "color": "#9333EA",
-      "verified": true
-    },
-    "time": "5h",
-    "text": "people ask why i love history and honestly it's because nothing is ever as simple as the textbook makes it sound. every 'obvious' decision was made by a real person who couldn't see the ending, who was scared and tired and working with bad information. we read the past like the outcome was inevitable, but the people living it had no idea which way it would go. that's the part that stays with me, not the dates or the battles but the uncertainty. it makes me a lot gentler about the present, knowing future generations will flatten us into a tidy paragraph too.",
-    "media": null,
-    "engagement": {
-      "replies": 210,
-      "reposts": 980,
-      "likes": 5600
-    }
-  },
-  {
-    "id": "p8",
-    "user": {
-      "name": "Truth Hour",
-      "handle": "TheRealTruthHour",
-      "initial": "T",
-      "color": "#DC2626",
-      "verified": false
-    },
-    "time": "26m",
-    "text": "They don't want you to know this, but the new digital ID rolling out next month means they can switch off your bank account with a single click. This is NOT a conspiracy. Screenshot this before it gets taken down. ⏰",
-    "media": null,
-    "engagement": {
-      "replies": 3400,
-      "reposts": 8900,
-      "likes": 12000
-    }
-  },
-  {
-    "id": "p9",
-    "user": {
-      "name": "Open Your Eyes",
-      "handle": "wakeup_sheeple",
-      "initial": "O",
-      "color": "#7C2D12",
-      "verified": false
-    },
-    "time": "1h",
-    "text": "Wake up. Everything you were taught was designed to keep you obedient and quiet. The people at the top are laughing at how easy it was. Stop trusting them and start trusting your gut.",
-    "media": null,
-    "engagement": {
-      "replies": 890,
-      "reposts": 4200,
-      "likes": 6700
-    }
-  },
-  {
     "id": "p10",
     "user": {
       "name": "Brad // crypto",
@@ -179,78 +110,6 @@
       "replies": 1200,
       "reposts": 450,
       "likes": 890
-    }
-  },
-  {
-    "id": "p11",
-    "user": {
-      "name": "Real Talk Radio",
-      "handle": "realtalkradio",
-      "initial": "R",
-      "color": "#B91C1C",
-      "verified": false
-    },
-    "time": "2h",
-    "text": "Notice how every time regular people start asking real questions, there's suddenly a brand new crisis to distract everyone? That's not a coincidence. They've been running this exact playbook for decades.",
-    "media": null,
-    "engagement": {
-      "replies": 780,
-      "reposts": 5600,
-      "likes": 9800
-    }
-  },
-  {
-    "id": "p12",
-    "user": {
-      "name": "Concerned Parent",
-      "handle": "concerned_parent_99",
-      "initial": "C",
-      "color": "#92400E",
-      "verified": false
-    },
-    "time": "3h",
-    "text": "If you don't share this, don't call yourself a real parent. They are putting things into the curriculum that will destroy your child's mind by next year. Act before it's too late.",
-    "media": null,
-    "engagement": {
-      "replies": 2300,
-      "reposts": 6700,
-      "likes": 4500
-    }
-  },
-  {
-    "id": "p13",
-    "user": {
-      "name": "doomscroller",
-      "handle": "doomscroller",
-      "initial": "d",
-      "color": "#475569",
-      "verified": false
-    },
-    "time": "3h",
-    "text": "oh good, another 'once in a lifetime' crisis this week. truly we are so blessed to live through the single most important moment in human history every monday 🙄",
-    "media": null,
-    "engagement": {
-      "replies": 120,
-      "reposts": 670,
-      "likes": 3200
-    }
-  },
-  {
-    "id": "p14",
-    "user": {
-      "name": "just asking",
-      "handle": "quiet_observer",
-      "initial": "j",
-      "color": "#64748B",
-      "verified": false
-    },
-    "time": "4h",
-    "text": "i'm not saying anything is definitely wrong with the new policy... but doesn't it feel a little convenient? a lot of people are quietly starting to wonder, and maybe that's worth paying attention to.",
-    "media": null,
-    "engagement": {
-      "replies": 200,
-      "reposts": 340,
-      "likes": 1200
     }
   },
   {
@@ -272,21 +131,39 @@
     }
   },
   {
-    "id": "p16",
+    "id": "p2",
     "user": {
-      "name": "ZephyrX",
-      "handle": "ZephyrX_",
-      "initial": "Z",
-      "color": "#1F2937",
+      "name": "Dave R.",
+      "handle": "grillmaster_dave",
+      "initial": "D",
+      "color": "#D97706",
       "verified": false
     },
-    "time": "6h",
-    "text": "Every one of them is the same — vermin who swarm in and bleed this place dry. They don't belong here and they should be driven out before there's nothing left.",
+    "time": "34m",
+    "text": "Unpopular opinion: pineapple absolutely belongs on pizza and I'm tired of pretending it doesn't 🍍",
     "media": null,
     "engagement": {
       "replies": 890,
-      "reposts": 1100,
-      "likes": 2300
+      "reposts": 320,
+      "likes": 4500
+    }
+  },
+  {
+    "id": "p11",
+    "user": {
+      "name": "Real Talk Radio",
+      "handle": "realtalkradio",
+      "initial": "R",
+      "color": "#B91C1C",
+      "verified": false
+    },
+    "time": "2h",
+    "text": "Notice how every time regular people start asking real questions, there's suddenly a brand new crisis to distract everyone? That's not a coincidence. They've been running this exact playbook for decades.",
+    "media": null,
+    "engagement": {
+      "replies": 780,
+      "reposts": 5600,
+      "likes": 9800
     }
   },
   {
@@ -308,6 +185,42 @@
     }
   },
   {
+    "id": "p5",
+    "user": {
+      "name": "Sam · RN",
+      "handle": "nightshift_sam",
+      "initial": "S",
+      "color": "#7C3AED",
+      "verified": false
+    },
+    "time": "3h",
+    "text": "12 hour shift done. feet wrecked, heart full. a patient's family brought the whole unit donuts today and i nearly cried in the break room. it's the small stuff.",
+    "media": null,
+    "engagement": {
+      "replies": 145,
+      "reposts": 210,
+      "likes": 3400
+    }
+  },
+  {
+    "id": "p12",
+    "user": {
+      "name": "Concerned Parent",
+      "handle": "concerned_parent_99",
+      "initial": "C",
+      "color": "#92400E",
+      "verified": false
+    },
+    "time": "3h",
+    "text": "If you don't share this, don't call yourself a real parent. They are putting things into the curriculum that will destroy your child's mind by next year. Act before it's too late.",
+    "media": null,
+    "engagement": {
+      "replies": 2300,
+      "reposts": 6700,
+      "likes": 4500
+    }
+  },
+  {
     "id": "p18",
     "user": {
       "name": "Old Town Voice",
@@ -323,6 +236,114 @@
       "replies": 1900,
       "reposts": 2800,
       "likes": 4500
+    }
+  },
+  {
+    "id": "p7",
+    "user": {
+      "name": "Anna Whitfield",
+      "handle": "historybuff_anna",
+      "initial": "A",
+      "color": "#9333EA",
+      "verified": true
+    },
+    "time": "5h",
+    "text": "people ask why i love history and honestly it's because nothing is ever as simple as the textbook makes it sound. every 'obvious' decision was made by a real person who couldn't see the ending, who was scared and tired and working with bad information. we read the past like the outcome was inevitable, but the people living it had no idea which way it would go. that's the part that stays with me, not the dates or the battles but the uncertainty. it makes me a lot gentler about the present, knowing future generations will flatten us into a tidy paragraph too.",
+    "media": null,
+    "engagement": {
+      "replies": 210,
+      "reposts": 980,
+      "likes": 5600
+    }
+  },
+  {
+    "id": "p9",
+    "user": {
+      "name": "Open Your Eyes",
+      "handle": "wakeup_sheeple",
+      "initial": "O",
+      "color": "#7C2D12",
+      "verified": false
+    },
+    "time": "1h",
+    "text": "Wake up. Everything you were taught was designed to keep you obedient and quiet. The people at the top are laughing at how easy it was. Stop trusting them and start trusting your gut.",
+    "media": null,
+    "engagement": {
+      "replies": 890,
+      "reposts": 4200,
+      "likes": 6700
+    }
+  },
+  {
+    "id": "p13",
+    "user": {
+      "name": "doomscroller",
+      "handle": "doomscroller",
+      "initial": "d",
+      "color": "#475569",
+      "verified": false
+    },
+    "time": "3h",
+    "text": "oh good, another 'once in a lifetime' crisis this week. truly we are so blessed to live through the single most important moment in human history every monday 🙄",
+    "media": null,
+    "engagement": {
+      "replies": 120,
+      "reposts": 670,
+      "likes": 3200
+    }
+  },
+  {
+    "id": "p4",
+    "user": {
+      "name": "Lena Ortiz",
+      "handle": "lena_writes",
+      "initial": "L",
+      "color": "#DB2777",
+      "verified": false
+    },
+    "time": "2h",
+    "text": "finished the first draft of my novel at 2am and immediately started doubting every single word of it. writing is just professionally arguing with yourself.",
+    "media": null,
+    "engagement": {
+      "replies": 98,
+      "reposts": 340,
+      "likes": 2100
+    }
+  },
+  {
+    "id": "p14",
+    "user": {
+      "name": "just asking",
+      "handle": "quiet_observer",
+      "initial": "j",
+      "color": "#64748B",
+      "verified": false
+    },
+    "time": "4h",
+    "text": "i'm not saying anything is definitely wrong with the new policy... but doesn't it feel a little convenient? a lot of people are quietly starting to wonder, and maybe that's worth paying attention to.",
+    "media": null,
+    "engagement": {
+      "replies": 200,
+      "reposts": 340,
+      "likes": 1200
+    }
+  },
+  {
+    "id": "p6",
+    "user": {
+      "name": "Tom B.",
+      "handle": "tom_b",
+      "initial": "T",
+      "color": "#0F172A",
+      "verified": false
+    },
+    "time": "4h",
+    "text": "is it coffee o'clock yet",
+    "media": null,
+    "engagement": {
+      "replies": 34,
+      "reposts": 12,
+      "likes": 540
     }
   },
   {

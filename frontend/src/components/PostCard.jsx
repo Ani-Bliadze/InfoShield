@@ -2,6 +2,7 @@ import React from "react";
 import Avatar from "./Avatar.jsx";
 import { Verified, Reply, Repost, Heart, Share, More } from "./icons.jsx";
 import { compact } from "../lib/format.jsx";
+import { API_BASE } from "../lib/api.js";
 
 function Engagement({ e }) {
   const items = [
@@ -51,6 +52,18 @@ export default function PostCard({ post }) {
 
           {post.media?.type === "gradient" && (
             <div className="mt-3 h-44 rounded-2xl border border-line bg-gradient-to-br from-emerald-100 via-emerald-50 to-teal-100" />
+          )}
+
+          {post.media?.type === "video" && (
+            <video
+              className="mt-3 w-full rounded-2xl border border-line bg-black"
+              src={`${API_BASE}${post.media.src}`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+            />
           )}
 
           <Engagement e={post.engagement} />

@@ -7,10 +7,11 @@ so this process starts with only Flask installed when serving from cache.
 from __future__ import annotations
 
 import logging
+import threading
 from collections import Counter
 from urllib.parse import urlparse
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 import config
@@ -18,8 +19,8 @@ from cache import (
     get_cache,
     load_activation,
     load_posts,
+    reset_activation,
     save_activation,
-    text_hash,
 )
 
 logging.basicConfig(
@@ -39,14 +40,44 @@ CACHE = get_cache()
 
 # --- helpers --------------------------------------------------------------
 def _merged_post(post: dict) -> dict:
-    """Attach cached classification + analysis to a raw post (author-agnostic)."""
-    cached = CACHE.get(post["id"]) or {}
+    """Serve cached classification + analysis; compute, store, and persist on a miss
+    so activating the extension shows saved results instantly."""
+    cached = CACHE.get(post["id"])
+    if not cached or not cached.get("classification"):
+        from pipeline import analyze_post
+
+        classification, analysis = analyze_post(post["text"])
+        CACHE.set(post["id"], classification, analysis)
+        CACHE.save()
+        cached = {"classification": classification, "analysis": analysis}
+    cls = cached.get("classification") or {}
     return {
         **post,
-        "classification": cached.get("classification"),
+        "classification": cls,
         "analysis": cached.get("analysis"),
-        "flagged": bool((cached.get("classification") or {}).get("flagged")),
+        "flagged": bool(cls.get("flagged")),
     }
+
+
+def _warm_cache() -> None:
+    """Background pre-warm: compute analysis for any uncached posts so the demo is
+    instant by the time the user activates the extension."""
+    try:
+        from classifier import get_classifier
+        from manip_classifier import get_manip_classifier
+
+        get_classifier().load()
+        get_manip_classifier().load()
+        missing = [p for p in POSTS if not (CACHE.get(p["id"]) or {}).get("classification")]
+        if not missing:
+            log.info("Cache already warm (%d posts).", len(POSTS))
+            return
+        log.info("Warming cache for %d post(s) in background ...", len(missing))
+        for p in missing:
+            _merged_post(p)
+        log.info("Cache warm complete.")
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Cache warm failed: %s", exc)
 
 
 def _is_localhost(url: str) -> bool:
@@ -62,23 +93,35 @@ def _is_localhost(url: str) -> bool:
 def health():
     from classifier import get_classifier
 
+    from llm import available as llm_available
+
     clf = get_classifier()
+    cached = sum(1 for p in POSTS if (CACHE.get(p["id"]) or {}).get("classification"))
     return jsonify({
         "status": "ok",
         "service": "infoshield",
-        "cache_mode": CACHE.mode,
-        "cache_built_at": CACHE.meta.get("built_at"),
-        "model": CACHE.meta.get("model") or config.PRIMARY_MODEL,
+        "mode": "cached",
+        "hate_model": config.PRIMARY_MODEL,
+        "manipulation_model": config.MANIP_MODEL,
         "model_loaded": clf.loaded,
-        "device": clf.device if clf.loaded else CACHE.meta.get("device", "unknown"),
+        "device": clf.device if clf.loaded else "unknown",
         "posts": len(POSTS),
-        "gemini_configured": bool(config.GEMINI_API_KEY),
+        "cached_posts": cached,
+        "llm_provider": config.LLM_PROVIDER,
+        "verifier_model": config.VERIFIER_MODEL,
+        "llm_configured": llm_available(),
     })
 
 
 @app.get("/feed")
 def feed():
     return jsonify({"posts": [_merged_post(p) for p in POSTS]})
+
+
+@app.get("/media/<path:filename>")
+def media(filename: str):
+    """Serve demo media (e.g. the feed video) from backend/data."""
+    return send_from_directory(config.DATA_DIR, filename)
 
 
 @app.get("/post-analysis/<post_id>")
@@ -113,41 +156,34 @@ def rebuild_cache_endpoint():
 
 @app.post("/classify")
 def classify():
+    """Hate-only classification of arbitrary text (live, content-only)."""
     data = request.get_json(silent=True) or {}
     text = (data.get("text") or "").strip()
-    key = text_hash(text)
-    if key in CACHE.adhoc and "classification" in CACHE.adhoc[key]:
-        return jsonify(CACHE.adhoc[key]["classification"])
     from classifier import get_classifier
 
     try:
-        result = get_classifier().classify(text)
+        return jsonify(get_classifier().classify(text))
     except Exception as exc:  # noqa: BLE001
         log.error("classify failed: %s", exc)
         return jsonify({"error": "classifier unavailable", "detail": str(exc)}), 503
-    CACHE.adhoc.setdefault(key, {})["classification"] = result
-    return jsonify(result)
 
 
 @app.post("/analyze")
 def analyze():
+    """Manipulation detection + educational analysis of arbitrary text (live)."""
     data = request.get_json(silent=True) or {}
     text = (data.get("text") or "").strip()
     if not text:
         return jsonify({"error": "empty text"}), 400
-    key = text_hash(text)
-    if key in CACHE.adhoc and "analysis" in CACHE.adhoc[key]:
-        return jsonify(CACHE.adhoc[key]["analysis"])
-    from analyzer import generate_analysis
+    from analyzer import detect_and_analyze
 
-    analysis = generate_analysis(text)
-    CACHE.adhoc.setdefault(key, {})["analysis"] = analysis
-    return jsonify(analysis)
+    return jsonify(detect_and_analyze(text))
 
 
 @app.get("/stats")
 def stats():
-    flagged = [_merged_post(p) for p in POSTS if (CACHE.get(p["id"]) or {}).get("classification", {}).get("flagged")]
+    posts = [_merged_post(p) for p in POSTS]
+    flagged = [p for p in posts if p["flagged"]]
     tech_counter: Counter = Counter()
     confidences = []
     high_conf = 0
@@ -182,9 +218,13 @@ def stats():
             "high_confidence_count": high_conf,
         },
         "model": {
-            "name": CACHE.meta.get("model") or config.PRIMARY_MODEL,
-            "device": CACHE.meta.get("device", "unknown"),
+            "hate_model": config.PRIMARY_MODEL,
+            "manipulation_model": config.MANIP_MODEL,
+            "llm_provider": config.LLM_PROVIDER,
+            "analyzer_model": config.GEMINI_MODEL if config.LLM_PROVIDER == "gemini" else config.GROQ_MODEL,
+            "verifier_model": config.VERIFIER_MODEL,
             "flag_threshold": config.FLAG_THRESHOLD,
+            "manipulation_threshold": config.MANIP_THRESHOLD,
             "high_confidence": config.HIGH_CONFIDENCE,
         },
         # Data-driven snapshot. The right-rail widget now renders from the
@@ -195,7 +235,7 @@ def stats():
             "patterns_detected": len(distribution),
             "most_common_pattern": most_common_label,
         },
-        "cache_mode": CACHE.mode,
+        "mode": "cached",
     })
 
 
@@ -231,6 +271,11 @@ def root():
 
 
 if __name__ == "__main__":
-    log.info("InfoShield backend starting on http://%s:%d (cache=%s)",
-             config.HOST, config.PORT, CACHE.mode)
+    if config.RESET_ACTIVATION_ON_START:
+        reset_activation()
+        log.info("Activation reset to default on startup (fresh demo).")
+    # Pre-warm the analysis cache in the background so activation is instant.
+    threading.Thread(target=_warm_cache, daemon=True).start()
+    log.info("InfoShield backend starting on http://%s:%d (provider=%s, cached)",
+             config.HOST, config.PORT, config.LLM_PROVIDER)
     app.run(host=config.HOST, port=config.PORT, debug=False)

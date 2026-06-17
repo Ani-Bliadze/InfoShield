@@ -14,7 +14,7 @@ import threading
 from datetime import datetime, timezone
 from typing import Optional
 
-from config import ACTIVATION_FILE, CACHE_FILE, DATA_DIR, POSTS_FILE
+from config import ACTIVATION_FILE, CACHE_FILE, CACHE_VERSION, DATA_DIR, POSTS_FILE
 
 log = logging.getLogger("infoshield.cache")
 _lock = threading.Lock()
@@ -50,6 +50,12 @@ class PostCache:
                 data = json.load(f)
             self.meta = data.get("meta", {})
             self.posts = data.get("posts", {})
+            if self.meta.get("version") != CACHE_VERSION:
+                log.info("Cache version mismatch (have %s, want %s) -- discarding stale cache.",
+                         self.meta.get("version"), CACHE_VERSION)
+                self.posts = {}
+                self.meta = {}
+                return False
             log.info("Loaded cache: %d posts (built_at=%s).",
                      len(self.posts), self.meta.get("built_at"))
             return True
@@ -59,6 +65,7 @@ class PostCache:
 
     def save(self) -> None:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
+        self.meta["version"] = CACHE_VERSION
         with _lock:
             payload = {"meta": self.meta, "posts": self.posts}
             with open(CACHE_FILE, "w", encoding="utf-8") as f:
@@ -74,6 +81,7 @@ class PostCache:
     def set_meta(self, **kw) -> None:
         self.meta.update(kw)
         self.meta["built_at"] = _now()
+        self.meta["version"] = CACHE_VERSION
 
     @property
     def mode(self) -> str:
@@ -122,3 +130,14 @@ def save_activation(target_url: str, enabled: bool = True) -> dict:
             json.dump(cfg, f, ensure_ascii=False, indent=2)
     log.info("Activation target saved: %s (enabled=%s)", target_url, enabled)
     return cfg
+
+
+def reset_activation() -> dict:
+    """Reset activation to default (disabled) so each fresh run starts at the
+    landing page's ACTIVATE button."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with _lock:
+        with open(ACTIVATION_FILE, "w", encoding="utf-8") as f:
+            json.dump(dict(DEFAULT_ACTIVATION), f, ensure_ascii=False, indent=2)
+    log.info("Activation reset to default (fresh demo).")
+    return dict(DEFAULT_ACTIVATION)

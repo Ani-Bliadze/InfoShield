@@ -10,8 +10,11 @@ transformers>=4.40
 safetensors>=0.4
 sentencepiece>=0.2
 
-# Gemini educational analysis (required to rebuild analyses live)
+# LLM manipulation detection + analysis. Groq is the default provider; Gemini
+# is the swap-in (set INFOSHIELD_LLM_PROVIDER=gemini).
+groq>=0.11
 google-genai>=0.3
 
 # Helpers
 huggingface_hub>=0.23
+emoji>=2.0  # BERTweet tokenizer (manipulation model) normalizes emojis with this
