@@ -58,6 +58,20 @@
     return c >= 0.8 ? `Detected with ${pct}% confidence` : `May contain indicators (${pct}% confidence)`;
   };
 
+  // Short label for an official human-rights / media-literacy source URL.
+  const sourceLabel = (url) => {
+    try {
+      const h = new URL(url).hostname.replace(/^www\./, "");
+      if (h.includes("ohchr")) return "OHCHR";
+      if (h.includes("unesco")) return "UNESCO";
+      if (h.includes("treaties.un")) return "UN Treaty";
+      if (h.includes("un.org") || h.includes("digitallibrary.un")) return "UN";
+      return h;
+    } catch {
+      return "source";
+    }
+  };
+
   // ---- backend ----------------------------------------------------------
   async function getEnabled() {
     return new Promise((res) =>
@@ -183,6 +197,28 @@
     rec.appendChild(el("div", "isx-rec__t", "Before you share"));
     rec.appendChild(el("div", "isx-rec__b", analysis.recommendation || ""));
     card.appendChild(rec);
+
+    if (analysis.bias_check) {
+      const bc = el("div", "isx-biascheck");
+      bc.appendChild(el("b", null, "Rights check: "));
+      bc.appendChild(document.createTextNode(analysis.bias_check));
+      card.appendChild(bc);
+    }
+
+    if (analysis.citations && analysis.citations.length) {
+      const src = el("div", "isx-sources");
+      src.appendChild(el("b", null, "Sources: "));
+      analysis.citations.forEach((url, i) => {
+        const a = el("a", "isx-source-link", sourceLabel(url));
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        src.appendChild(a);
+        if (i < analysis.citations.length - 1) src.appendChild(document.createTextNode(" · "));
+      });
+      card.appendChild(src);
+    }
+
     card.appendChild(el("div", "isx-foot", "InfoShield adds context — it never hides or removes posts. You decide."));
 
     wrap.appendChild(card);

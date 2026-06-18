@@ -46,10 +46,10 @@ def analyze_post(text: str) -> tuple[dict, dict | None]:
         analysis = analyze(text, kind)
         verification = verify(text, analysis, kind)
         # Overturn (false positive) if EITHER the verifier judged the analysis
-        # irrelevant, OR a manipulation flag produced no concrete technique/
-        # highlight (deterministic precision guard; hate keeps its high-precision flag).
+        # irrelevant, OR the rights-grounded analysis found no concrete technique/
+        # highlight (deterministic, speech-protective guard for both kinds).
         empty = not analysis.get("techniques") and not analysis.get("highlights")
-        if not verification.get("relevant", True) or (kind == "manipulation" and empty):
+        if not verification.get("relevant", True) or empty:
             flagged = False
             analysis = None
             kind = None

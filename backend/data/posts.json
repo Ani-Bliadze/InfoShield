@@ -167,6 +167,24 @@
     }
   },
   {
+    "id": "ru1",
+    "user": {
+      "name": "Дмитрий",
+      "handle": "dmitry_news",
+      "initial": "Д",
+      "color": "#1D4ED8",
+      "verified": false
+    },
+    "time": "40m",
+    "text": "Они не хотят, чтобы вы это знали: новый закон позволит им отключить ваш счёт одним щелчком. Не молчите. Сделайте репост, пока это не удалили.",
+    "media": null,
+    "engagement": {
+      "replies": 980,
+      "reposts": 5200,
+      "likes": 4100
+    }
+  },
+  {
     "id": "p17",
     "user": {
       "name": "Borderwatch",

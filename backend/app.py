@@ -180,6 +180,38 @@ def analyze():
     return jsonify(detect_and_analyze(text))
 
 
+@app.post("/analyze-text")
+def analyze_text():
+    """Full pipeline (both detectors + analysis + verifier) on a user's own draft.
+    Always LIVE -- never cached -- so the compose-assist demo runs fresh each time."""
+    data = request.get_json(silent=True) or {}
+    text = (data.get("text") or "").strip()
+    if not text:
+        return jsonify({"error": "empty text"}), 400
+    from pipeline import analyze_post
+
+    classification, analysis = analyze_post(text)
+    return jsonify({
+        "text": text,
+        "classification": classification,
+        "analysis": analysis,
+        "flagged": classification["flagged"],
+    })
+
+
+@app.post("/rephrase")
+def rephrase_endpoint():
+    """Rewrite the user's draft to remove manipulation/hate while keeping their
+    viewpoint. Live; never cached; never censors (returns original on failure)."""
+    data = request.get_json(silent=True) or {}
+    text = (data.get("text") or "").strip()
+    if not text:
+        return jsonify({"error": "empty text"}), 400
+    from analyzer import rephrase
+
+    return jsonify({"rephrased": rephrase(text)})
+
+
 @app.get("/stats")
 def stats():
     posts = [_merged_post(p) for p in POSTS]

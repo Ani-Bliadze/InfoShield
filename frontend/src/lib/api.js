@@ -31,4 +31,26 @@ export const api = {
     if (!res.ok) throw new Error(data.error || `rebuild failed (${res.status})`);
     return data;
   },
+  // Live (never cached): analyze the user's own draft through the full pipeline.
+  analyzeText: async (text) => {
+    const res = await fetch(`${API_BASE}/analyze-text`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `analyze failed (${res.status})`);
+    return data;
+  },
+  // Live (never cached): rephrase the draft to remove manipulation/hate.
+  rephrase: async (text) => {
+    const res = await fetch(`${API_BASE}/rephrase`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `rephrase failed (${res.status})`);
+    return data;
+  },
 };

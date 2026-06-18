@@ -25,6 +25,14 @@ log = logging.getLogger("infoshield.manip")
 _POS_SUBSTR = ("prop", "manip", "persuas", "label_")  # "label_n" => generic multi-label head
 _NEG_TOKENS = {"no", "not", "non", "none", "clean", "neutral", "normal", "negative"}
 
+# Multi-label persuasion models include "negative" and structural taxonomy nodes that
+# fire on almost any text (a root/parent category). We exclude these so the manipulation
+# score is the strongest *concrete technique* probability, not a structural node.
+_STRUCTURAL_LABELS = {
+    "root", "none", "no technique", "no_propaganda", "not offensive",
+    "logos", "ethos", "pathos", "reasoning", "justification",
+}
+
 
 class ManipulationClassifier:
     """Lazy, device-aware wrapper. Returns a manipulation probability in [0, 1]."""
@@ -34,6 +42,7 @@ class ManipulationClassifier:
         self._model = None
         self._multilabel = False
         self._pos_index: Optional[int] = None
+        self._keep_idx: Optional[list[int]] = None  # technique labels to score over
         self._max_len = MAX_TOKENS
         self.model_name: Optional[str] = None
         self.device: str = "cpu"
@@ -79,7 +88,12 @@ class ManipulationClassifier:
         self._max_len = min(MAX_TOKENS, max(16, mpe - 2))
         self._multilabel = problem == "multi_label_classification" or n > 2
         if self._multilabel:
-            log.info("Manipulation head: multi-label (%d techniques), score = max sigmoid.", n)
+            id2label = {int(k): str(v).lower().strip() for k, v in cfg.id2label.items()}
+            self._keep_idx = [i for i, lab in id2label.items() if lab not in _STRUCTURAL_LABELS]
+            if not self._keep_idx:
+                self._keep_idx = list(id2label.keys())
+            log.info("Manipulation head: multi-label (%d labels, %d technique labels scored), "
+                     "score = max sigmoid over techniques.", n, len(self._keep_idx))
             return
         # Binary: find the "propaganda/manipulation present" index.
         id2label = {int(k): str(v).lower() for k, v in cfg.id2label.items()}
@@ -103,7 +117,8 @@ class ManipulationClassifier:
         with torch.no_grad():
             logits = self._model(**enc).logits[0]
             if self._multilabel:
-                score = float(torch.sigmoid(logits).max().item())
+                sig = torch.sigmoid(logits)
+                score = float(sig[self._keep_idx].max().item()) if self._keep_idx else float(sig.max().item())
             else:
                 score = float(torch.softmax(logits, dim=-1)[self._pos_index].item())
         return score, truncated

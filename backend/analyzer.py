@@ -22,8 +22,11 @@ from config import (
     ALLOWED_TECHNIQUES,
     ANALYSIS_SYSTEM_INSTRUCTION,
     HATE_ANALYSIS_PROMPT,
+    LEGAL_SOURCE_URLS,
     MANIPULATION_ANALYSIS_PROMPT,
     MAX_EXPLANATION_CHARS,
+    REPHRASE_PROMPT,
+    REPHRASE_SYSTEM_INSTRUCTION,
     TECHNIQUE_LABELS,
     VERIFIER_MODEL,
     VERIFIER_PROMPT,
@@ -57,10 +60,17 @@ ANALYSIS_SCHEMA = {
                 "required": ["phrase", "type", "label"],
             },
         },
+        "bias_check": {"type": "string"},
+        "citations": {"type": "array", "items": {"type": "string"}},
     },
     "required": ["techniques", "emotional_triggers", "explanation",
-                 "recommendation", "severity", "highlights"],
+                 "recommendation", "severity", "highlights", "bias_check", "citations"],
 }
+
+_DEFAULT_BIAS_CHECK = (
+    "Checked against Article 19 free-expression protections and non-discrimination "
+    "safeguards; flagged only on concrete textual evidence."
+)
 
 _STRICT_SUFFIX = (
     "\n\nIMPORTANT: Output MUST be a single valid JSON object matching the schema "
@@ -110,6 +120,11 @@ def validate_analysis(raw: dict, text: str) -> Optional[dict]:
         )
         highlights.append({"phrase": text[idx: idx + len(phrase)], "type": htype, "label": label})
 
+    bias_check = str(raw.get("bias_check", "")).strip()[:300] or _DEFAULT_BIAS_CHECK
+    allow = set(LEGAL_SOURCE_URLS)
+    citations = [u for u in raw.get("citations", []) if isinstance(u, str) and u in allow]
+    citations = list(dict.fromkeys(citations))[:5]
+
     if not techniques and not highlights and not explanation:
         return None
     return {
@@ -119,6 +134,8 @@ def validate_analysis(raw: dict, text: str) -> Optional[dict]:
         "recommendation": recommendation,
         "severity": severity,
         "highlights": highlights,
+        "bias_check": bias_check,
+        "citations": citations,
     }
 
 
@@ -174,6 +191,8 @@ def local_fallback_analysis(text: str) -> dict:
         "recommendation": "Take a moment before sharing and check whether the claim holds up calmly.",
         "severity": severity,
         "highlights": highlights[:6],
+        "bias_check": "Heuristic check (LLM unavailable); flags only explicit manipulative cues, free expression preserved.",
+        "citations": [],
         "source": "local_fallback",
     }
 
@@ -181,7 +200,8 @@ def local_fallback_analysis(text: str) -> dict:
 def _empty_analysis() -> dict:
     return {
         "techniques": [], "emotional_triggers": [], "explanation": "",
-        "recommendation": "", "severity": "low", "highlights": [], "source": "empty",
+        "recommendation": "", "severity": "low", "highlights": [],
+        "bias_check": _DEFAULT_BIAS_CHECK, "citations": [], "source": "empty",
     }
 
 
@@ -214,7 +234,7 @@ def verify(text: str, analysis: dict, kind: str) -> dict:
     Fails OPEN: if the verifier can't run, relevant=True (keep the flag).
     """
     payload = json.dumps(
-        {k: analysis.get(k) for k in ("techniques", "explanation", "severity")},
+        {k: analysis.get(k) for k in ("techniques", "explanation", "severity", "bias_check", "citations")},
         ensure_ascii=False,
     )
     # The configured verifier model id is Gemini-specific; only pass it when the
@@ -234,6 +254,20 @@ def verify(text: str, analysis: dict, kind: str) -> dict:
         "reason": str(raw.get("reason", "")).strip()[:200],
         "checked": True,
     }
+
+
+# --- rephrase (live compose-assist) ---------------------------------------
+def rephrase(text: str) -> str:
+    """Rewrite a draft to remove manipulation/hate while keeping the author's
+    viewpoint. Returns the original text on failure (never raises, never censors)."""
+    if not text or not text.strip():
+        return text
+    raw = complete_json(REPHRASE_SYSTEM_INSTRUCTION, REPHRASE_PROMPT.format(text=text))
+    if isinstance(raw, dict):
+        out = str(raw.get("rephrased") or "").strip()
+        if out:
+            return out
+    return text
 
 
 # Backwards-compatible alias for the /analyze endpoint.
