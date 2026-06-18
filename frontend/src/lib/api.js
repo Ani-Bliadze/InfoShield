@@ -1,8 +1,15 @@
-// Backend base URL. The demo backend runs on localhost:5050; override with
-// ?api=http://host:port for unusual setups.
+// Backend base URL. Locally the demo backend runs on localhost:5050. A hosted
+// build points at the deployed backend via VITE_API_BASE. ?api=host:port still
+// overrides both for one-off setups.
 const params = new URLSearchParams(window.location.search);
 export const API_BASE =
-  params.get("api") || "http://localhost:5050";
+  params.get("api") || import.meta.env.VITE_API_BASE || "http://localhost:5050";
+
+// Hosted mode: the site simulates the InfoShield extension itself (renders the
+// per-post overlays, pre-activates, and the on-page toggle drives them) so a
+// single hosted link is testable without installing the extension. Off locally,
+// where the real extension does the injection.
+export const HOSTED = import.meta.env.VITE_HOSTED === "1";
 
 async function getJSON(path) {
   const res = await fetch(`${API_BASE}${path}`);

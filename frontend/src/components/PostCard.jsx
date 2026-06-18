@@ -1,8 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "./Avatar.jsx";
 import { Verified, Reply, Repost, Heart, Share, More } from "./icons.jsx";
 import { compact } from "../lib/format.jsx";
-import { API_BASE } from "../lib/api.js";
+import { API_BASE, HOSTED } from "../lib/api.js";
+import PostAnalysis from "./PostAnalysis.jsx";
+
+// Wrap the first occurrence of each highlight phrase (case-insensitive,
+// non-overlapping) in a <mark>, mirroring the extension's in-post highlighting.
+function highlightNodes(text, phrases) {
+  const lower = text.toLowerCase();
+  const ranges = [];
+  for (const phrase of phrases) {
+    const needle = (phrase || "").toLowerCase();
+    if (!needle) continue;
+    const idx = lower.indexOf(needle);
+    if (idx === -1) continue;
+    const end = idx + needle.length;
+    if (ranges.some((r) => idx < r.end && end > r.start)) continue; // skip overlaps
+    ranges.push({ start: idx, end });
+  }
+  if (!ranges.length) return text;
+  ranges.sort((a, b) => a.start - b.start);
+  const out = [];
+  let pos = 0;
+  ranges.forEach((r, i) => {
+    if (r.start > pos) out.push(text.slice(pos, r.start));
+    out.push(<mark key={i} className="fs-highlight">{text.slice(r.start, r.end)}</mark>);
+    pos = r.end;
+  });
+  if (pos < text.length) out.push(text.slice(pos));
+  return out;
+}
 
 function Engagement({ e }) {
   const items = [
@@ -24,9 +52,15 @@ function Engagement({ e }) {
   );
 }
 
-// A plain feed post. Carries a stable data-post-id so the InfoShield extension
-// can find it; the site itself never renders analysis (extension-driven demo).
-export default function PostCard({ post }) {
+// A feed post. Carries a stable data-post-id so the InfoShield extension can
+// find it locally. In hosted mode (no extension) the site renders the analysis
+// overlay itself, gated on the Insights toggle (`visible`).
+export default function PostCard({ post, visible = true }) {
+  const [expanded, setExpanded] = useState(false);
+  const showOverlay = HOSTED && visible && post.flagged && !!post.analysis;
+  const phrases = showOverlay ? (post.analysis.highlights || []).map((h) => h.phrase) : [];
+  const textContent = showOverlay && expanded ? highlightNodes(post.text, phrases) : post.text;
+
   return (
     <article
       data-post-id={post.id}
@@ -47,7 +81,7 @@ export default function PostCard({ post }) {
           </div>
 
           <div className="mt-0.5 text-[15px] leading-normal text-ink whitespace-pre-wrap break-words">
-            {post.text}
+            {textContent}
           </div>
 
           {post.media?.type === "gradient" && (
@@ -67,6 +101,10 @@ export default function PostCard({ post }) {
           )}
 
           <Engagement e={post.engagement} />
+
+          {showOverlay && (
+            <PostAnalysis post={post} expanded={expanded} onToggle={() => setExpanded((v) => !v)} />
+          )}
         </div>
       </div>
     </article>

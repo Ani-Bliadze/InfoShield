@@ -1,0 +1,17 @@
+# Keep the Docker build context (and the HF Space) lean: only backend/ is needed.
+.git/
+.venv/
+**/__pycache__/
+*.pyc
+*.log
+.env
+
+node_modules/
+frontend/
+extension/
+assets/
+docs/
+tools/
+
+# Local ML models are re-downloaded on first boot, never shipped.
+backend/models/

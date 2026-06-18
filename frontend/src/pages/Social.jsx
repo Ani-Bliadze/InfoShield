@@ -4,7 +4,27 @@ import RightSidebar from "../components/RightSidebar.jsx";
 import Composer from "../components/Composer.jsx";
 import PostCard from "../components/PostCard.jsx";
 import { Settings } from "../components/icons.jsx";
-import { api } from "../lib/api.js";
+import { api, HOSTED } from "../lib/api.js";
+import { TECH_LABELS } from "../lib/infoshield.js";
+
+// Hosted mode has no extension to report a page scan, so derive the Insights
+// figures from the feed directly (mirrors the extension's computeScan).
+function computeScan(posts) {
+  const flagged = posts.filter((p) => p.flagged && p.analysis);
+  const counter = {};
+  flagged.forEach((p) => (p.analysis.techniques || []).forEach((t) => (counter[t] = (counter[t] || 0) + 1)));
+  let top = null;
+  let max = 0;
+  for (const [t, c] of Object.entries(counter)) {
+    if (c > max) { max = c; top = t; }
+  }
+  return {
+    scanned: posts.length,
+    flagged: flagged.length,
+    patternsDetected: Object.keys(counter).length,
+    mostCommonPattern: top ? (TECH_LABELS[top] || top) : "—",
+  };
+}
 
 function Tabs() {
   return (
@@ -23,18 +43,23 @@ export default function Social() {
   const [error, setError] = useState(null);
   // Insights stay hidden until the extension reports a real page scan.
   const [scan, setScan] = useState(null);
-  // `activated` mirrors the landing-page activation (read-only here). `visible`
-  // is the live show/hide toggle for the InfoShield analysis UI (default on).
-  const [activated, setActivated] = useState(false);
+  // `activated` mirrors the landing-page activation (read-only here); hosted mode
+  // is pre-activated. `visible` is the live show/hide toggle for the InfoShield
+  // analysis UI (default on).
+  const [activated, setActivated] = useState(HOSTED);
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     document.title = "Home / For you";
     api
       .feed()
-      .then((d) => setPosts(d.posts || []))
+      .then((d) => {
+        const ps = d.posts || [];
+        setPosts(ps);
+        if (HOSTED) setScan(computeScan(ps)); // no extension to report a scan
+      })
       .catch(() => setError("Could not reach the feed server on http://localhost:5050."));
-    api.activationTarget().then((cfg) => setActivated(!!cfg?.enabled)).catch(() => {});
+    if (!HOSTED) api.activationTarget().then((cfg) => setActivated(!!cfg?.enabled)).catch(() => {});
   }, []);
 
   // Toggling visibility hides/shows the extension-injected overlays live (CSS in
@@ -80,7 +105,7 @@ export default function Social() {
 
           <Composer activated={activated} visible={visible} />
           {posts.map((p) => (
-            <PostCard key={p.id} post={p} />
+            <PostCard key={p.id} post={p} visible={visible} />
           ))}
 
           {posts.length === 0 && !error && (
