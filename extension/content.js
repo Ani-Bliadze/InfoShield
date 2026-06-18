@@ -26,6 +26,16 @@
     identity_targeting: "Identity Targeting",
     ad_hominem: "Ad Hominem",
   };
+  const TECH_CHIP = {
+    false_urgency: "isx-chip--red",
+    fear_amplification: "isx-chip--amber",
+    us_vs_them: "isx-chip--teal",
+    scapegoating: "isx-chip--amber",
+    dehumanizing_language: "isx-chip--rose",
+    emotional_manipulation: "isx-chip--violet",
+    identity_targeting: "isx-chip--rose",
+    ad_hominem: "isx-chip--slate",
+  };
 
   const STATE = {
     active: false,
@@ -120,11 +130,10 @@
   }
 
   // ---- overlay construction --------------------------------------------
-  function buildBadge() {
-    const wrap = el("span", "isx-badge");
-    wrap.title = "Flagged by InfoShield";
-    for (let i = 0; i < 3; i++) wrap.appendChild(el("span", "isx-ring"));
-    const img = el("img", "isx-badge__core");
+  function buildShield() {
+    const wrap = el("span", "isx-shield");
+    for (let i = 0; i < 3; i++) wrap.appendChild(el("span", "isx-shield__ring"));
+    const img = el("img", "isx-shield__core");
     img.src = badgeUrl;
     img.alt = "InfoShield";
     wrap.appendChild(img);
@@ -135,68 +144,29 @@
     const { classification, analysis } = entry;
     const wrap = el("div", "isx-wrap");
     let expanded = false;
-    let highlightsOn = false;
+    const phrases = (analysis.highlights || []).map((h) => h.phrase);
 
+    // Collapsed status bar: animated shield · confidence · expand toggle.
     const bar = el("button", "isx-bar");
-    const bimg = el("img");
-    bimg.src = badgeUrl;
-    bar.appendChild(bimg);
-    bar.appendChild(el("span", "isx-bar__name", "InfoShield"));
-    bar.appendChild(el("span", "isx-bar__conf", `· ${confidenceLabel(classification.confidence)}`));
-    const more = el("span", "isx-bar__more");
-    const moreText = el("span", null, "What's this?");
-    more.appendChild(moreText);
-    bar.appendChild(more);
+    bar.appendChild(buildShield());
+    bar.appendChild(el("span", "isx-bar__conf", confidenceLabel(classification.confidence)));
+    const moreText = el("span", "isx-bar__more", "What's this?");
+    bar.appendChild(moreText);
     wrap.appendChild(bar);
 
+    // Expanded card.
     const card = el("div", "isx-card");
     card.style.display = "none";
-
-    const head = el("div", "isx-card__head");
-    const himg = el("img");
-    himg.src = badgeUrl;
-    head.appendChild(himg);
-    head.appendChild(el("div", "isx-card__title", "Manipulation techniques detected"));
-    const sev = el("span", "isx-sev");
-    sev.appendChild(el("span", "isx-sev__dot"));
-    sev.appendChild(el("span", null, `${analysis.severity || "medium"} severity`));
-    head.appendChild(sev);
-    card.appendChild(head);
+    card.appendChild(el("div", "isx-card__title", "Why was this flagged?"));
 
     const chips = el("div", "isx-chips");
     (analysis.techniques || []).forEach((t) =>
-      chips.appendChild(el("span", "isx-chip", TECH_LABELS[t] || t))
+      chips.appendChild(el("span", `isx-chip ${TECH_CHIP[t] || "isx-chip--violet"}`, TECH_LABELS[t] || t))
     );
     card.appendChild(chips);
 
-    card.appendChild(el("p", "isx-expl", analysis.explanation || ""));
-
-    if (analysis.emotional_triggers && analysis.emotional_triggers.length) {
-      const leans = el("div", "isx-leans");
-      leans.appendChild(el("b", null, "Leans on: "));
-      leans.appendChild(document.createTextNode(analysis.emotional_triggers.join(", ")));
-      card.appendChild(leans);
-    }
-
-    const phrases = (analysis.highlights || []).map((h) => h.phrase);
-    if (phrases.length) {
-      const toggle = el("button", "isx-toggle");
-      const box = el("span", "isx-toggle__box");
-      toggle.appendChild(box);
-      toggle.appendChild(el("span", null, "Highlight phrases in the post"));
-      toggle.addEventListener("click", () => {
-        highlightsOn = !highlightsOn;
-        box.classList.toggle("on", highlightsOn);
-        box.textContent = highlightsOn ? "✓" : "";
-        highlightIn(node, phrases, highlightsOn);
-      });
-      card.appendChild(toggle);
-    }
-
-    const rec = el("div", "isx-rec");
-    rec.appendChild(el("div", "isx-rec__t", "Before you share"));
-    rec.appendChild(el("div", "isx-rec__b", analysis.recommendation || ""));
-    card.appendChild(rec);
+    if (analysis.explanation) card.appendChild(el("p", "isx-expl", analysis.explanation));
+    if (analysis.recommendation) card.appendChild(el("div", "isx-rec", analysis.recommendation));
 
     if (analysis.bias_check) {
       const bc = el("div", "isx-biascheck");
@@ -207,19 +177,16 @@
 
     if (analysis.citations && analysis.citations.length) {
       const src = el("div", "isx-sources");
-      src.appendChild(el("b", null, "Sources: "));
-      analysis.citations.forEach((url, i) => {
+      src.appendChild(el("b", null, "Sources:"));
+      analysis.citations.forEach((url) => {
         const a = el("a", "isx-source-link", sourceLabel(url));
         a.href = url;
         a.target = "_blank";
         a.rel = "noopener noreferrer";
         src.appendChild(a);
-        if (i < analysis.citations.length - 1) src.appendChild(document.createTextNode(" · "));
       });
       card.appendChild(src);
     }
-
-    card.appendChild(el("div", "isx-foot", "InfoShield adds context — it never hides or removes posts. You decide."));
 
     wrap.appendChild(card);
 
@@ -227,6 +194,7 @@
       expanded = !expanded;
       card.style.display = expanded ? "block" : "none";
       moreText.textContent = expanded ? "Hide" : "What's this?";
+      highlightIn(node, phrases, expanded); // auto-highlight while expanded
     });
 
     return wrap;
@@ -239,9 +207,6 @@
     node.dataset.isxInjected = "1";
     if (!entry || !entry.flagged || !entry.analysis) return;
 
-    const cs = getComputedStyle(node);
-    if (cs.position === "static") node.style.position = "relative";
-    node.appendChild(buildBadge());
     node.appendChild(buildAnalysis(node, entry));
     STATE.flagged.add(id);
   }

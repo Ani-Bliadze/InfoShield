@@ -23,3 +23,13 @@ body {
 /* The flagged-post badge, pulsing rings, and phrase highlighting are injected by
    the InfoShield browser extension (see extension/content.css). The site itself
    renders a plain feed. */
+
+/* The Insights toggle hides the InfoShield analysis UI live (no refresh) by
+   adding `isx-hidden` to <body>. This hides the extension-injected overlays
+   without touching the extension. */
+body.isx-hidden .isx-wrap,
+body.isx-hidden .isx-badge { display: none !important; }
+body.isx-hidden mark.isx-highlight {
+  background: transparent !important;
+  border-bottom: none !important;
+}

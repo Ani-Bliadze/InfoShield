@@ -83,6 +83,10 @@ export default function Landing() {
         @keyframes isxDriftA { from { transform: translate3d(0,0,0); } to { transform: translate3d(190px,-220px,0); } }
         @keyframes isxDriftB { from { transform: translate3d(0,0,0); } to { transform: translate3d(-210px,180px,0); } }
         @keyframes isxTwinkle { 0%,100% { opacity: var(--o); } 50% { opacity: calc(var(--o) * 0.3); } }
+        @keyframes isxLogoPulse {
+          0%,100% { transform: scale(1); box-shadow: 0 8px 30px rgba(139,92,246,0.28); }
+          50% { transform: scale(1.07); box-shadow: 0 0 60px rgba(139,92,246,0.7); }
+        }
       `}</style>
 
       {/* Background: near-black base with a faintly purple core */}
@@ -140,7 +144,8 @@ export default function Landing() {
         <img
           src="/infoshield-logo.png"
           alt="InfoShield"
-          className="w-16 h-16 rounded-2xl shadow-[0_8px_40px_rgba(139,92,246,0.22)]"
+          className="w-16 h-16 rounded-2xl"
+          style={{ animation: "isxLogoPulse 2.6s ease-in-out infinite" }}
         />
 
         {/* Tag pill */}

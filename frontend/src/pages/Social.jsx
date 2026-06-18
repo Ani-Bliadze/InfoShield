@@ -23,6 +23,10 @@ export default function Social() {
   const [error, setError] = useState(null);
   // Insights stay hidden until the extension reports a real page scan.
   const [scan, setScan] = useState(null);
+  // `activated` mirrors the landing-page activation (read-only here). `visible`
+  // is the live show/hide toggle for the InfoShield analysis UI (default on).
+  const [activated, setActivated] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     document.title = "Home / For you";
@@ -30,7 +34,15 @@ export default function Social() {
       .feed()
       .then((d) => setPosts(d.posts || []))
       .catch(() => setError("Could not reach the feed server on http://localhost:5050."));
+    api.activationTarget().then((cfg) => setActivated(!!cfg?.enabled)).catch(() => {});
   }, []);
+
+  // Toggling visibility hides/shows the extension-injected overlays live (CSS in
+  // index.css), with no page refresh and without touching the extension.
+  useEffect(() => {
+    document.body.classList.toggle("isx-hidden", !visible);
+    return () => document.body.classList.remove("isx-hidden");
+  }, [visible]);
 
   useEffect(() => {
     // Listen for the extension's scan results (posted via window.postMessage).
@@ -66,7 +78,7 @@ export default function Social() {
             </div>
           )}
 
-          <Composer />
+          <Composer activated={activated} visible={visible} />
           {posts.map((p) => (
             <PostCard key={p.id} post={p} />
           ))}
@@ -76,7 +88,7 @@ export default function Social() {
           )}
         </main>
 
-        <RightSidebar scan={scan} />
+        <RightSidebar scan={scan} visible={visible} onToggle={setVisible} />
       </div>
     </div>
   );
