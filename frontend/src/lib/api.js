@@ -9,7 +9,11 @@ export const API_BASE =
 // per-post overlays, pre-activates, and the on-page toggle drives them) so a
 // single hosted link is testable without installing the extension. Off locally,
 // where the real extension does the injection.
-export const HOSTED = import.meta.env.VITE_HOSTED === "1";
+// Enabled by VITE_HOSTED=1, or automatically on any non-localhost host (a
+// deployed domain never has the extension, which only matches localhost).
+const _host = typeof window !== "undefined" ? window.location.hostname : "localhost";
+const _isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[?::1\]?)$/.test(_host);
+export const HOSTED = import.meta.env.VITE_HOSTED === "1" || !_isLocal;
 
 async function getJSON(path) {
   const res = await fetch(`${API_BASE}${path}`);
